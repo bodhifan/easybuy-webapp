@@ -9,6 +9,7 @@ import com.easybuy.model.bean.Productor;
 import com.easybuy.model.data.ProductorEntity;
 import com.easybuy.services.ProductorDao;
 import com.easybuy.services.ProductorDaoImp;
+import com.easybuy.utily.ConvertUtilty;
 
 @Path("product")
 public class ProductorResource
@@ -19,6 +20,6 @@ public class ProductorResource
     @Produces({MediaType.APPLICATION_JSON})
     public Productor getProductor(@PathParam("id") int prodId)
     {
-       return productor.getProductor(prodId);
+       return ConvertUtilty.convertToProductor(productor.getProductor(prodId));
     }
 }

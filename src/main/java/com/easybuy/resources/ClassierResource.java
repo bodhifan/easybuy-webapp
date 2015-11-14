@@ -4,10 +4,13 @@ package com.easybuy.resources;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
+import com.easybuy.exceptions.NotContentException;
+import com.easybuy.exceptions.NotFoundException;
 import com.easybuy.model.bean.Classier;
 import com.easybuy.model.data.ClasserEntity;
 import com.easybuy.services.ClassierDaoImp;
@@ -38,9 +41,14 @@ public class ClassierResource
         return id;
     }
     @GET
-    public Classier get(@PathParam("id") int clsId)
+    public Classier get(@PathParam("id") int clsId) throws WebApplicationException
     {
        id = clsId;
-       return new ClassierDaoImp().Get(151);
+       Classier classier = new ClassierDaoImp().Get(clsId);
+       if (classier == null)
+       {
+           throw new NotContentException();
+       }
+       return classier;
     }
 }

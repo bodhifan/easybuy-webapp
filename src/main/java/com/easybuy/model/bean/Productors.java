@@ -18,12 +18,21 @@ import org.glassfish.jersey.linking.InjectLinks;
 import org.glassfish.jersey.linking.InjectLink.Style;
 
 import com.easybuy.model.data.ItemsModel;
+import com.easybuy.model.data.ProductorEntity;
 import com.easybuy.resources.ItemsResource;
 import com.easybuy.resources.ProductorResource;
 import com.easybuy.resources.ProductorsResource;
+import com.easybuy.services.ProductorDao;
 import com.easybuy.services.ProductorDaoImp;
+import com.easybuy.utily.ConvertUtilty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonValue;
 
+import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 
 /*
  * DESCRIPTION
@@ -39,41 +48,41 @@ import lombok.Getter;
  *   bofan     2015年11月13日 - Creation
  *
  */
-@XmlRootElement(name = "items")
-@InjectLinks({
-        @InjectLink(
-                resource = ProductorsResource.class,
-                style = Style.ABSOLUTE,
-                method = "query",
-                condition = "${instance.offset + instance.limit < instance.modelLimit}",
-                bindings = {
-                        @Binding(name = "offset", value = "${instance.offset + instance.limit}"),
-                        @Binding(name = "limit", value = "${instance.limit}")
-                },
-                rel = "next"
-        ),
-        @InjectLink(
-                resource = ProductorsResource.class,
-                style = Style.ABSOLUTE,
-                method = "query",
-                condition = "${instance.offset - instance.limit >= 0}",
-                bindings = {
-                        @Binding(name = "offset", value = "${instance.offset - instance.limit}"),
-                        @Binding(name = "limit", value = "${instance.limit}")
-                },
-                rel = "prev"
-        )})
+//@InjectLinks({
+//        @InjectLink(
+//                resource = ProductorsResource.class,
+//                style = Style.ABSOLUTE,
+//                method = "query",
+//                condition = "${instance.offset + instance.limit < instance.modelLimit}",
+//                bindings = {
+//                        @Binding(name = "offset", value = "${instance.offset + instance.limit}"),
+//                        @Binding(name = "limit", value = "${instance.limit}")
+//                },
+//                rel = "next"
+//        ),
+//        @InjectLink(
+//                resource = ProductorsResource.class,
+//                style = Style.ABSOLUTE,
+//                method = "query",
+//                condition = "${instance.offset - instance.limit >= 0}",
+//                bindings = {
+//                        @Binding(name = "offset", value = "${instance.offset - instance.limit}"),
+//                        @Binding(name = "limit", value = "${instance.limit}")
+//                },
+//                rel = "prev"
+//        )})
+@Data
+@JsonPropertyOrder(alphabetic = true,value = {"productors"})  
 public class Productors {
 
-    @XmlElement(name = "items")
+    @JsonProperty("productors")
     private List<Productor> items;
 
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @JsonIgnore
     private int offset, limit;
 
-    @XmlTransient
-    @com.fasterxml.jackson.annotation.JsonIgnore
-    private List<Productor> itemsModel;
+    @JsonIgnore
+    private ProductorDao productorModel;
 
     @InjectLink(
             resource = ProductorsResource.class,
@@ -85,7 +94,6 @@ public class Productors {
             rel = "self"
     )
     @XmlJavaTypeAdapter(Link.JaxbAdapter.class)
-    @XmlElement(name = "link")
     @Getter Link self;
 
     @InjectLinks({
@@ -119,34 +127,38 @@ public class Productors {
     public Productors() {
         offset = 0;
         limit = 10;
+        productorModel = new ProductorDaoImp();
     }
 
-    public Productors(ItemsModel itemsModel, int offset, int limit) {
+    public Productors(int offset, int limit) {
 
+        productorModel = new ProductorDaoImp();
         this.offset = offset;
         this.limit = limit;
-        this.itemsModel = new ProductorDaoImp().getAllProductor();
-
         items = new ArrayList<>();
-        for (int i = offset; i < (offset + limit) && i < this.itemsModel.size(); i++) {
-            items.add(this.itemsModel.get(i));
+        List<ProductorEntity> entities = productorModel.getAllProductor();
+        for (int i = offset; i < (offset + limit) && i < entities.size(); i++) {
+            items.add(ConvertUtilty.convertToProductor(entities.get(i)));
         }
 
     }
-
-    @XmlTransient
     public int getOffset() {
         return offset;
     }
 
-    @XmlTransient
     public int getLimit() {
         return limit;
     }
 
-    @XmlTransient
+    @JsonIgnore
     public int getModelLimit() {
-        return itemsModel.size();
+        return productorModel.getAllProductor().size();
+    }
+    
+    public Productor getProductor(int id)
+    {
+        ProductorEntity entity = productorModel.getProductor(id);
+        return ConvertUtilty.convertToProductor(entity);
     }
 }
 

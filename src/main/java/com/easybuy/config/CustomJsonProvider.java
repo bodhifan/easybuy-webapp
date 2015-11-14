@@ -5,7 +5,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 /*
@@ -31,6 +36,10 @@ public class CustomJsonProvider extends JacksonJaxbJsonProvider
         try
         {
             mapper = new CustomJasonContextResovler().getContext(ObjectMapper.class);
+//            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//            mapper.setSerializationInclusion(Include.ALWAYS);
+//            mapper.setVisibility(PropertyAccessor.ALL, Visibility.ANY);
+//            mapper.enable(SerializationFeature.INDENT_OUTPUT);
             System.out.println("初始化...");
         }
         catch(Exception ex)
@@ -38,4 +47,9 @@ public class CustomJsonProvider extends JacksonJaxbJsonProvider
             System.out.println("初始化...");
         }
      }
+    
+    public CustomJsonProvider() {
+        super();
+        setMapper(mapper);
+    }
 }

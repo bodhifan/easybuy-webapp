@@ -4,10 +4,7 @@ package com.easybuy.services;
 import java.util.Date;
 import java.util.List;
 
-import com.easybuy.exceptions.ExceptionNoResult;
 import com.easybuy.model.bean.Classier;
-import com.easybuy.model.bean.Productor;
-import com.easybuy.model.data.ClasserEntity;
 import com.easybuy.model.data.ProductorEntity;
 
 /*
@@ -29,7 +26,7 @@ public interface ProductorDao
     int createProductor(String pName, Classier classer, double price,
             String desc, Date createDate);
     void deleteProductor(int pId);
-    Productor getProductor(int pId);
-    Productor getProductor(String name) throws ExceptionNoResult;
-    List<Productor> getAllProductor();
+    ProductorEntity getProductor(int pId);
+    ProductorEntity getProductor(String name);
+    List<ProductorEntity> getAllProductor();
 }

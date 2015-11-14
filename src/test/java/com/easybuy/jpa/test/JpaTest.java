@@ -41,9 +41,12 @@ public class JpaTest
     public void CreateProductor()
     {
         ProductorDao dao = new ProductorDaoImp();
-        ClassierDao classierDao = new ClassierDaoImp();        
-        int entity =  dao.createProductor("productor3", classierDao.Get(501), 783.34, "second product", new Date());
-        System.out.println(entity);
+        ClassierDao classierDao = new ClassierDaoImp(); 
+        for(int i = 0;i < 100;i ++)
+        {
+            int entity =  dao.createProductor("productor"+(i+4), classierDao.Get(501), 56.34+i, "th"+i+" product", new Date());
+            System.out.println(entity);
+        }
     }
    
 }

@@ -64,12 +64,13 @@ public class CustomJasonContextResovler implements ContextResolver<ObjectMapper>
 
     public CustomJasonContextResovler() throws Exception
     {
-       // System.out.println("############new ObjectMapperResolver()");
+        System.out.println("############new ObjectMapperResolver()");
         this.defaultObjectMapper = new ObjectMapper();
         defaultObjectMapper.setSerializationInclusion(Include.ALWAYS);
         
         SimpleModule simpleModule = new SimpleModule(getClass().getName(), new Version(1, 0, 0, null));
         simpleModule.addSerializer(Link.class, new LinkSerializer());
+        defaultObjectMapper.registerModule(simpleModule);
         
         DateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         dFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -112,7 +113,7 @@ public class CustomJasonContextResovler implements ContextResolver<ObjectMapper>
     @Override
     public ObjectMapper getContext(Class<?> type)
     {
-      //  System.out.println("#######ObjectMapperResolver.getContext(...)");
+        System.out.println("#######ObjectMapperResolver.getContext(...)");
         return defaultObjectMapper;
 //        if (type == Classier.class) {
 //            return userObjectMapper;

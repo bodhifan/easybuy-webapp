@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import com.easybuy.exceptions.NotContentException;
 import com.easybuy.model.bean.ItemsRepresentation;
 import com.easybuy.model.bean.Productor;
 import com.easybuy.model.bean.Productors;
@@ -51,11 +52,20 @@ public class ProductorsResource
             );
         }
 
-        return new Productors(null, offset, limit);
+        return new Productors(offset, limit);
     }
 
     @Path("{id}")
+    @GET
     public Productor get(@PathParam("id") String id) {
-        return new Productor(Integer.parseInt(id));
+        
+        Productor productor = new Productors().getProductor(Integer.parseInt(id));
+        if (productor == null)
+        {
+            throw new NotContentException();
+        }
+        
+        return productor;
+        
     }
 }

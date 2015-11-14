@@ -11,7 +11,6 @@ import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
-import com.easybuy.exceptions.ExceptionNoResult;
 import com.easybuy.model.bean.Classier;
 import com.easybuy.model.bean.Productor;
 import com.easybuy.model.data.ClasserEntity;
@@ -61,42 +60,29 @@ public class ProductorDaoImp implements ProductorDao
     }
 
     @Override
-    public Productor getProductor(String name) throws ExceptionNoResult
+    public ProductorEntity getProductor(String name)
     {
         EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("JPA_EASYBUY");
         EntityManager entityManager = emFactory.createEntityManager();        
         TypedQuery<ProductorEntity> query =  entityManager.createNamedQuery("Productor.findByName",ProductorEntity.class);
         query.setParameter("name", name);
         List<ProductorEntity> rtn = query.getResultList();
-        
-        if (rtn.isEmpty())
-        {
-            throw new ExceptionNoResult();
-        }
         entityManager.close();
         
         emFactory.close();
-        return ConvertUtilty.convertToProductor(rtn.get(0));
+        return rtn.get(0);
     }
 
     @Override
-    public List<Productor> getAllProductor()
+    public List<ProductorEntity> getAllProductor()
     {
         EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("JPA_EASYBUY");
         EntityManager entityManager = emFactory.createEntityManager();        
         TypedQuery<ProductorEntity> query =  entityManager.createNamedQuery("Productor.findAll",ProductorEntity.class);
         List<ProductorEntity> rtn = query.getResultList();
-        
-        List<Productor> productors = new ArrayList<>(rtn.size());
-        
-        for (ProductorEntity productor : rtn)
-        {
-            productors.add(ConvertUtilty.convertToProductor(productor));
-        }
         entityManager.close();
-        
         emFactory.close();
-        return productors;
+        return rtn;
     }
 
     @Override
@@ -114,14 +100,14 @@ public class ProductorDaoImp implements ProductorDao
     }
     
     @Override
-    public Productor getProductor(int pId)
+    public ProductorEntity getProductor(int pId)
     {
         EntityManagerFactory emFactory = Persistence.createEntityManagerFactory("JPA_EASYBUY");
         EntityManager entityManager = emFactory.createEntityManager();        
        ProductorEntity entity =  entityManager.find(ProductorEntity.class, pId);
        entityManager.close();
        emFactory.close();
-       return ConvertUtilty.convertToProductor(entity);
+       return entity;
     }
 
 
